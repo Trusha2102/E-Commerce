@@ -1,5 +1,7 @@
 const db = require('../../models');
 const User = db.User;
+const jwt = require('jsonwebtoken');
+
 
 // Create and Save a new User
 exports.create = async (req, res) => {
@@ -68,3 +70,16 @@ exports.delete = async (req, res) => {
         res.status(500).json({ message: error.message || `Could not delete User with id=${id}.` });
     }
 };
+
+
+exports.login = async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ where: { username, password } });
+
+    if (!user) {
+        return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    const token = jwt.sign({ id: user.id, username: user.username }, process.env.SECRET_KEY);
+    res.json({ token });
+}

@@ -12,6 +12,19 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      cover_image: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      is_active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

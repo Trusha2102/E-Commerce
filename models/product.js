@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'categoryId',
                 as: 'category',
             });
+            Product.hasMany(models.StockInformation, {
+                foreignKey: 'productId',
+                as: 'stock',
+            });
         }
     }
     Product.init(
@@ -20,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             description: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
                 allowNull: true,
             },
             categoryId: {
@@ -30,6 +34,14 @@ module.exports = (sequelize, DataTypes) => {
                     model: 'ProductCategories',
                     key: 'id',
                 },
+            },
+            images: {
+                type: DataTypes.JSONB,
+                allowNull: true,
+            },
+            reviews: {
+                type: DataTypes.JSONB,
+                allowNull: true,
             },
         },
         {

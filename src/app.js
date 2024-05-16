@@ -4,6 +4,7 @@ const cors = require('cors');
 const sequelize = require('./config/database');
 const routes = require('./routes');
 const path = require('path')
+const cronJob = require('./services/cronEmail')
 require('dotenv').config();
 
 const app = express();
@@ -24,6 +25,8 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 
 app.use('/api', routes);
+
+cronJob.start();
 
 // Sync database
 // sequelize.sync()

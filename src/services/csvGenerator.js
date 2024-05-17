@@ -1,11 +1,12 @@
-// utils/csvGenerator.js
 const fs = require('fs');
 
 function generateCSV(records) {
-    let csv = 'Symbol,Price\n';
+    let csv = 'productId,available_items\n';
+
     records.forEach(record => {
-        csv += `${record.symbol},${record.price}\n`;
+        csv += `${record.productId},${record.available_items}\n`;
     });
+
     return csv;
 }
 

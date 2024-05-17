@@ -3,6 +3,7 @@ const Product = db.Product;
 const ProductCategory = db.ProductCategory;
 const upload = require('../services/multerConfig').array('images', 10); // Allow up to 10 images
 const path = require('path');
+const { Op } = require('sequelize');
 
 // Helper function to convert backslashes to forward slashes
 const normalizePath = (filePath) => filePath.replace(/\\/g, '/');
@@ -35,14 +36,35 @@ exports.create = async (req, res) => {
 // Retrieve all Products
 exports.findAll = async (req, res) => {
     try {
-        const products = await Product.findAll({
-            include: ['category']
-        });
-        res.status(200).json(products);
+        const { search, reviews, minPrice, maxPrice } = req.query;
+
+        // Build the filter criteria
+        const filter = {};
+        if (search) {
+            filter[Op.or] = [
+                { name: { [Op.iLike]: `%${search}%` } },
+                { description: { [Op.iLike]: `%${search}%` } }
+            ];
+        }
+        if (reviews) {
+            filter.reviews = { [Op.iLike]: `%${reviews}%` };
+        }
+        if (minPrice && maxPrice) {
+            filter.price = { [Op.between]: [parseFloat(minPrice), parseFloat(maxPrice)] };
+        } else if (minPrice) {
+            filter.price = { [Op.gte]: parseFloat(minPrice) };
+        } else if (maxPrice) {
+            filter.price = { [Op.lte]: parseFloat(maxPrice) };
+        }
+
+        const product = await Product.findAll({ where: filter });
+
+        res.status(200).json(product);
     } catch (error) {
-        res.status(500).json({ message: error.message || "Some error occurred while retrieving Products." });
+        res.status(500).json({ message: error.message || "Some error occurred while retrieving Product Categories." });
     }
 };
+
 
 // Find a single Product by Id
 exports.findOne = async (req, res) => {
